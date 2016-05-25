@@ -1,4 +1,9 @@
 tasks-symfony
 =============
 
-A Symfony project created on May 25, 2016, 11:12 am.
+On initial run:
+- set db settings in app/config/parameters.yml
+- symfony bin/console doctrine:database:create && symfony bin/console doctrine:schema:create
+
+To run the app:
+- symfony bin/console server:run
