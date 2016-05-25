@@ -1,0 +1,66 @@
+{% extends "::base.html.twig" %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Tasks</div>
+                <div class="panel-body">
+
+                    <div class="col-md-12 col-lg-8">
+                        {% if tasks|length > 0 %}
+                        <ul class="list-group">
+                            {% for task in tasks %}
+                            <li class="list-group-item {% if task.isCompleted %} task-completed {% endif %}">
+                                {{ task.task }}
+                                <input type="checkbox" class="complete-task pull-right {% if task.isCompleted %} hidden {% endif %}" data-csrf-token="{{ csrf_token('task') }}" data-complete-url="{{ url('tasks.complete', {'id': task.id}) }}" data-incomplete-url="{{ url('tasks.incomplete', {'id': task.id}) }}">
+                                <input type="checkbox" class="incomplete-task pull-right {% if not task.isCompleted %} hidden {% endif %}" checked="checked" data-csrf-token="{{ csrf_token('task') }}" data-complete-url="{{ url('tasks.complete', {'id': task.id}) }}" data-incomplete-url="{{ url('tasks.incomplete', {'id': task.id}) }}">
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <div class="alert alert-info">No tasks found.</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-12 col-lg-4">
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-btn fa-save"></i> Save
+                            </button>
+                        {{ form_end(form) }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(function(){
+           $('.complete-task').on('click', function(){
+               var _this = $(this);
+               $.post(_this.data('completeUrl'), { _token: _this.data('csrfToken') }, function(){
+                   _this.addClass('hidden');
+                   _this.parent().find('.incomplete-task').removeClass('hidden');
+                   _this.closest('li').addClass('task-completed');
+               });
+           });
+            $('.incomplete-task').on('click', function() {
+                var _this = $(this);
+                $.post(_this.data('incompleteUrl'), {_token: _this.data('csrfToken')}, function () {
+                    _this.addClass('hidden');
+                    _this.parent().find('.complete-task').removeClass('hidden');
+                    _this.closest('li').removeClass('task-completed');
+                });
+            });
+        });
+    </script>
+{% endblock %}
