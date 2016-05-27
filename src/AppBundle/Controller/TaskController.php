@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class TaskController extends Controller
 {
     /**
+     * @Route("/", name="home")
      * @Route("/tasks", name="tasks.index")
      */
     public function indexAction()
